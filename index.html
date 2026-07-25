@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Taskly — Sign In</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --bg: #000000;
+            --surface: #111111;
+            --border: #222222;
+            --border-focus: #555555;
+            --ink: #ffffff;
+            --ink-soft: #888888;
+            --ink-mute: #555555;
+            --btn-bg: #ffffff;
+            --btn-fg: #000000;
+            --btn-hover: #dddddd;
+            --error: #ff4444;
+            --success: #44ff44;
+            --radius: 12px;
+            --ease: cubic-bezier(0.22, 0.61, 0.36, 1);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html {
+            -webkit-font-smoothing: antialiased;
+        }
+
+        body {
+            min-height: 100vh;
+            font-family: 'Inter', system-ui, sans-serif;
+            color: var(--ink);
+            background: var(--bg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1.25rem;
+        }
+
+        .auth-card {
+            width: 100%;
+            max-width: 400px;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 2.5rem 2rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            animation: rise 0.5s var(--ease) both;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .mark {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            background: var(--ink);
+            display: grid;
+            place-items: center;
+            flex: none;
+        }
+
+        .mark svg {
+            width: 20px;
+            height: 20px;
+            stroke: var(--bg);
+            stroke-width: 2.5;
+        }
+
+        .brand-text h1 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.4rem;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            line-height: 1;
+        }
+
+        .brand-text p {
+            color: var(--ink-soft);
+            font-size: 0.82rem;
+            margin-top: 0.2rem;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .field-wrap {
+            display: flex;
+            flex-direction: column;
+            gap: 0.35rem;
+        }
+
+        .field-wrap label {
+            font-size: 0.8rem;
+            font-weight: 500;
+            color: var(--ink-soft);
+        }
+
+        .field {
+            width: 100%;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--ink);
+            font-family: 'Inter', system-ui, sans-serif;
+            font-size: 0.9rem;
+            padding: 0.75rem 0.85rem;
+            transition: border-color 0.2s var(--ease);
+        }
+
+        .field::placeholder {
+            color: var(--ink-mute);
+        }
+
+        .field:focus {
+            outline: none;
+            border-color: var(--border-focus);
+        }
+
+        #confirm-group {
+            display: none;
+        }
+
+        #confirm-group.visible {
+            display: flex;
+        }
+
+        .error-msg {
+            font-size: 0.82rem;
+            color: var(--error);
+            min-height: 1.2em;
+            transition: opacity 0.2s;
+        }
+
+        .error-msg:empty {
+            opacity: 0;
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 0.8rem;
+            border: none;
+            border-radius: 8px;
+            background: var(--btn-bg);
+            color: var(--btn-fg);
+            font-family: 'Inter', system-ui, sans-serif;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s var(--ease), transform 0.1s;
+            position: relative;
+        }
+
+        .submit-btn:hover {
+            background: var(--btn-hover);
+        }
+
+        .submit-btn:active {
+            transform: scale(0.98);
+        }
+
+        .submit-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .submit-btn .spinner {
+            display: none;
+            width: 18px;
+            height: 18px;
+            border: 2px solid transparent;
+            border-top-color: var(--bg);
+            border-radius: 50%;
+            animation: spin 0.6s linear infinite;
+            margin: 0 auto;
+        }
+
+        .submit-btn.loading .btn-text {
+            display: none;
+        }
+
+        .submit-btn.loading .spinner {
+            display: block;
+        }
+
+        .toggle-mode {
+            text-align: center;
+            font-size: 0.82rem;
+            color: var(--ink-soft);
+        }
+
+        .toggle-mode a {
+            color: var(--ink);
+            text-decoration: underline;
+            text-underline-offset: 3px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+
+        .toggle-mode a:hover {
+            color: var(--ink-soft);
+        }
+
+        .divider {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            color: var(--ink-mute);
+            font-size: 0.75rem;
+        }
+
+        .divider::before,
+        .divider::after {
+            content: "";
+            flex: 1;
+            height: 1px;
+            background: var(--border);
+        }
+
+        .google-btn {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            background: transparent;
+            color: var(--ink);
+            font-family: 'Inter', system-ui, sans-serif;
+            font-size: 0.85rem;
+            font-weight: 500;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            transition: background 0.2s, border-color 0.2s;
+        }
+
+        .google-btn:hover {
+            background: rgba(255, 255, 255, 0.04);
+            border-color: var(--border-focus);
+        }
+
+        .google-btn svg {
+            width: 18px;
+            height: 18px;
+        }
+
+        @keyframes rise {
+            from {
+                opacity: 0;
+                transform: translateY(12px);
+            }
+            to {
+                opacity: 1;
+                transform: none;
+            }
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 440px) {
+            .auth-card {
+                padding: 2rem 1.5rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="auth-card">
+        <div class="brand">
+            <span class="mark">
+                <svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M4 13a8 8 0 0 1 16 0" />
+                    <path d="M12 5v-1M4.2 13H3M21 13h-1.2M6.3 7.3l-.8-.8M17.7 7.3l.8-.8" />
+                    <path d="M9 17l2 2 4-4" />
+                </svg>
+            </span>
+            <div class="brand-text">
+                <h1 id="page-title">Sign in</h1>
+                <p id="page-subtitle">Welcome back to Taskly.</p>
+            </div>
+        </div>
+
+        <form class="form-group" id="auth-form" autocomplete="on" novalidate>
+            <div class="field-wrap">
+                <label for="email">Email</label>
+                <input class="field" id="email" type="email" placeholder="you@example.com" required
+                    autocomplete="email">
+            </div>
+            <div class="field-wrap">
+                <label for="password">Password</label>
+                <input class="field" id="password" type="password" placeholder="Enter your password" required
+                    autocomplete="current-password" minlength="6">
+            </div>
+            <div class="field-wrap" id="confirm-group">
+                <label for="confirm-password">Confirm Password</label>
+                <input class="field" id="confirm-password" type="password" placeholder="Confirm your password"
+                    autocomplete="new-password" minlength="6">
+            </div>
+
+            <div class="error-msg" id="error-msg" role="alert"></div>
+
+            <button class="submit-btn" id="submit-btn" type="submit">
+                <span class="btn-text" id="btn-text">Sign In</span>
+                <span class="spinner"></span>
+            </button>
+        </form>
+
+        <p class="toggle-mode" id="toggle-text">
+            Don't have an account? <a id="toggle-link">Create one</a>
+        </p>
+    </div>
+
+    <script type="module">
+        import { signUp, signIn, getSession } from './auth.js'
+
+        const form = document.getElementById('auth-form')
+        const emailInput = document.getElementById('email')
+        const passwordInput = document.getElementById('password')
+        const confirmGroup = document.getElementById('confirm-group')
+        const confirmInput = document.getElementById('confirm-password')
+        const errorMsg = document.getElementById('error-msg')
+        const submitBtn = document.getElementById('submit-btn')
+        const btnText = document.getElementById('btn-text')
+        const toggleLink = document.getElementById('toggle-link')
+        const toggleText = document.getElementById('toggle-text')
+        const pageTitle = document.getElementById('page-title')
+        const pageSubtitle = document.getElementById('page-subtitle')
+
+        let isSignUp = false
+
+        // If already logged in, go to app
+        const { session } = await getSession()
+        if (session) {
+            window.location.href = 'app.html'
+        }
+
+        // Toggle login / signup
+        toggleLink.addEventListener('click', () => {
+            isSignUp = !isSignUp
+            errorMsg.textContent = ''
+
+            if (isSignUp) {
+                pageTitle.textContent = 'Create account'
+                pageSubtitle.textContent = 'Get started with Taskly.'
+                btnText.textContent = 'Create Account'
+                confirmGroup.classList.add('visible')
+                toggleText.innerHTML = 'Already have an account? <a id="toggle-link">Sign in</a>'
+            } else {
+                pageTitle.textContent = 'Sign in'
+                pageSubtitle.textContent = 'Welcome back to Taskly.'
+                btnText.textContent = 'Sign In'
+                confirmGroup.classList.remove('visible')
+                toggleText.innerHTML = 'Don\'t have an account? <a id="toggle-link">Create one</a>'
+            }
+
+            // Rebind toggle link after innerHTML change
+            document.getElementById('toggle-link').addEventListener('click', () => {
+                toggleLink.click()
+            })
+        })
+
+        // Form submit
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault()
+            errorMsg.textContent = ''
+
+            const email = emailInput.value.trim()
+            const password = passwordInput.value
+
+            if (!email || !password) {
+                errorMsg.textContent = 'Please fill in all fields.'
+                return
+            }
+
+            if (isSignUp) {
+                const confirm = confirmInput.value
+                if (password !== confirm) {
+                    errorMsg.textContent = 'Passwords do not match.'
+                    return
+                }
+                if (password.length < 6) {
+                    errorMsg.textContent = 'Password must be at least 6 characters.'
+                    return
+                }
+            }
+
+            submitBtn.disabled = true
+            submitBtn.classList.add('loading')
+
+            let result
+            if (isSignUp) {
+                result = await signUp(email, password)
+            } else {
+                result = await signIn(email, password)
+            }
+
+            submitBtn.disabled = false
+            submitBtn.classList.remove('loading')
+
+            if (result.error) {
+                errorMsg.textContent = result.error.message
+                return
+            }
+
+            if (isSignUp) {
+                errorMsg.style.color = 'var(--success)'
+                errorMsg.textContent = 'Account created! Check your email for verification, then sign in.'
+                isSignUp = false
+                pageTitle.textContent = 'Sign in'
+                pageSubtitle.textContent = 'Welcome back to Taskly.'
+                btnText.textContent = 'Sign In'
+                confirmGroup.classList.remove('visible')
+                toggleText.innerHTML = 'Don\'t have an account? <a id="toggle-link">Create one</a>'
+                document.getElementById('toggle-link').addEventListener('click', () => {
+                    toggleLink.click()
+                })
+                errorMsg.style.color = ''
+            } else {
+                window.location.href = 'app.html'
+            }
+        })
+    </script>
+</body>
+
+</html>
